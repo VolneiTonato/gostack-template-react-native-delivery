@@ -17,6 +17,8 @@ interface Order {
   formattedPrice: string;
   thumbnail_url: string;
   extras: Extra[];
+  formattedTotal?: string;
+  total: number;
 }
 
 export const Container = styled.View`

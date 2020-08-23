@@ -61,9 +61,11 @@ interface Food {
   extras: Extra[];
 }
 
-interface Order extends Omit<Food, 'id' | 'formattedPrice' | 'image_url'> {
+interface Order extends Omit<Food, 'id' | 'formattedPrice'> {
   id: number | string;
   product_id: number;
+  quantity: number;
+  total: number;
   thumbnail_url: string;
 }
 
@@ -182,17 +184,20 @@ const FoodDetails: React.FC = () => {
     const extrasSelecionados = extras.filter(extra => extra.quantity > 0);
     const order: Order = {
       id: uuid(),
+      quantity: foodQuantity,
       product_id: food.id,
       description: food.description,
       extras: extrasSelecionados,
       thumbnail_url: food.image_url,
+      image_url: food.image_url,
       name: food.name,
-      price: numberUtils.currency.currencyBRLToDouble(cartTotal),
+      price: food.price,
+      total: numberUtils.currency.currencyBRLToDouble(cartTotal),
     };
 
     await api.post('/orders', order);
     navigation.navigate('ConfirmOrder');
-  }, [food, extras, cartTotal, navigation]);
+  }, [food, extras, cartTotal, navigation, foodQuantity]);
 
   // Calculate the correct icon name
   const favoriteIconName = useMemo(

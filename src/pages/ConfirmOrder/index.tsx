@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { Container, Message, IconContainer } from './styles';

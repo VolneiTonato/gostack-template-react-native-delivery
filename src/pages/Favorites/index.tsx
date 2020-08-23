@@ -42,7 +42,6 @@ const Favorites: React.FC = () => {
         })),
       );
   };
-  /*
   useFocusEffect(
     useCallback(() => {
       loadFavorites();
@@ -51,11 +50,6 @@ const Favorites: React.FC = () => {
       };
     }, []),
   );
-  */
-
-  useEffect(() => {
-    loadFavorites();
-  }, []);
 
   return (
     <Container>

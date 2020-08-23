@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Image } from 'react-native';
-
+import { useNavigation } from '@react-navigation/native';
 import api from '../../services/api';
 import formatValue from '../../utils/formatValue';
 
@@ -35,10 +35,13 @@ interface Order {
   formattedPrice: string;
   thumbnail_url: string;
   extras: Extra[];
+  formattedTotal?: string;
+  total: number;
 }
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const { navigate } = useNavigation();
 
   const loadOrders = useCallback(async () => {
     const { data } = await api.get<Order[]>('/orders');
@@ -47,7 +50,7 @@ const Orders: React.FC = () => {
       setOrders(
         data.map(order => ({
           ...order,
-          formattedPrice: formatValue(order.price),
+          formattedTotal: formatValue(order.total),
         })),
       );
   }, []);
@@ -55,6 +58,13 @@ const Orders: React.FC = () => {
   useEffect(() => {
     loadOrders();
   }, []);
+
+  const handleNavigateOrderDetails = useCallback(
+    (id: string | number) => {
+      navigate('OrderDetails', { id });
+    },
+    [navigate],
+  );
 
   return (
     <Container>
@@ -67,7 +77,11 @@ const Orders: React.FC = () => {
           data={orders}
           keyExtractor={item => String(item.id)}
           renderItem={({ item }) => (
-            <Food key={item.id} activeOpacity={0.6}>
+            <Food
+              key={item.id}
+              activeOpacity={0.6}
+              onPress={() => handleNavigateOrderDetails(item.id)}
+            >
               <FoodImageContainer>
                 <Image
                   style={{ width: 88, height: 88 }}
@@ -77,7 +91,7 @@ const Orders: React.FC = () => {
               <FoodContent>
                 <FoodTitle>{item.name}</FoodTitle>
                 <FoodDescription>{item.description}</FoodDescription>
-                <FoodPricing>{item.formattedPrice}</FoodPricing>
+                <FoodPricing>{item.formattedTotal}</FoodPricing>
               </FoodContent>
             </Food>
           )}
