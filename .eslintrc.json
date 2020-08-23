@@ -29,6 +29,12 @@
     "prettier"
   ],
   "rules": {
+    "no-restricted-globals": "warn",
+    "@typescript-eslint/explicit-module-boundary-types": "warn",
+    "no-empty": "warn",
+    "@typescript-eslint/no-unused-vars": "off",
+    "no-param-reassign": "off",
+    "no-return-assign": "off",
     "camelcase": "off",
     "prettier/prettier": "error",
     "react/jsx-one-expression-per-line": "off",

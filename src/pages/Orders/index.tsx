@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Image } from 'react-native';
 
 import api from '../../services/api';
@@ -18,23 +18,41 @@ import {
   FoodPricing,
 } from './styles';
 
-interface Food {
+interface Extra {
   id: number;
+  name: string;
+  value: number;
+  quantity: number;
+}
+
+interface Order {
+  id: string;
+  status: 'pendente' | 'concluido';
+  product_id: number;
   name: string;
   description: string;
   price: number;
-  formattedValue: number;
+  formattedPrice: string;
   thumbnail_url: string;
+  extras: Extra[];
 }
 
 const Orders: React.FC = () => {
-  const [orders, setOrders] = useState<Food[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+
+  const loadOrders = useCallback(async () => {
+    const { data } = await api.get<Order[]>('/orders');
+
+    if (data)
+      setOrders(
+        data.map(order => ({
+          ...order,
+          formattedPrice: formatValue(order.price),
+        })),
+      );
+  }, []);
 
   useEffect(() => {
-    async function loadOrders(): Promise<void> {
-      // Load orders from API
-    }
-
     loadOrders();
   }, []);
 

@@ -8,6 +8,7 @@ import TabRoutes from './tab.routes';
 
 import Home from '../pages/Home';
 import FoodDetails from '../pages/FoodDetails';
+import ConfirmOrder from '../pages/ConfirmOrder';
 
 const App = createStackNavigator();
 
@@ -62,6 +63,21 @@ const AppRoutes: React.FC = () => (
             shadowColor: 'transparent',
           },
         })}
+      />
+      <App.Screen
+        name="ConfirmOrder"
+        component={ConfirmOrder}
+        options={{
+          cardStyle: {
+            backgroundColor: 'transparent',
+          },
+          headerTransparent: true,
+          headerShown: false,
+          gestureEnabled: false,
+          headerStyle: {
+            shadowColor: 'transparent',
+          },
+        }}
       />
     </App.Navigator>
   </NavigationContainer>

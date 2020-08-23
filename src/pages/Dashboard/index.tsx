@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Image, ScrollView } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
@@ -30,6 +30,7 @@ import {
 
 interface Food {
   id: number;
+  category: number;
   name: string;
   description: string;
   price: number;
@@ -43,6 +44,11 @@ interface Category {
   image_url: string;
 }
 
+interface FoodSearch {
+  category_like?: number;
+  name_like?: string;
+}
+
 const Dashboard: React.FC = () => {
   const [foods, setFoods] = useState<Food[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -53,29 +59,50 @@ const Dashboard: React.FC = () => {
 
   const navigation = useNavigation();
 
-  async function handleNavigate(id: number): Promise<void> {
-    // Navigate do ProductDetails page
-  }
+  const handleNavigate = useCallback(
+    (id: number) => {
+      navigation.navigate('FoodDetails', { id });
+    },
+    [navigation],
+  );
 
-  useEffect(() => {
-    async function loadFoods(): Promise<void> {
-      // Load Foods from API
-    }
+  const loadFoods = useCallback(async () => {
+    const foodSearch: FoodSearch = {};
 
-    loadFoods();
+    foodSearch.category_like = selectedCategory;
+    foodSearch.name_like = searchValue;
+
+    const { data } = await api.get<Food[]>('/foods', { params: foodSearch });
+
+    if (data)
+      setFoods(
+        data.map(food => ({
+          ...food,
+          formattedPrice: formatValue(food.price),
+        })),
+      );
   }, [selectedCategory, searchValue]);
 
-  useEffect(() => {
-    async function loadCategories(): Promise<void> {
-      // Load categories from API
-    }
+  const loadCategories = useCallback(async () => {
+    const { data } = await api.get<Category[]>('/categories');
 
-    loadCategories();
+    if (data) setCategories(data);
   }, []);
 
-  function handleSelectCategory(id: number): void {
-    // Select / deselect category
-  }
+  useEffect(() => {
+    loadFoods();
+  }, [loadFoods]);
+
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
+
+  const handleSelectCategory = useCallback(
+    (id: number): void => {
+      setSelectedCategory(selectedCategory === id ? undefined : id);
+    },
+    [selectedCategory],
+  );
 
   return (
     <Container>
